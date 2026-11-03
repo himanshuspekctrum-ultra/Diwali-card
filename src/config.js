@@ -17,14 +17,14 @@ const TEMPLATES = {
     fontFamily: 'TemplateSerif',
     fallbackFamily: 'serif',
     fontWeight: 'normal',
-    fontSize: 42,
+    fontSize: 38,
     textColor: '#8A3638',          // Crimson maroon: RGB(138, 54, 56)
     bgColor: '#FBF3E8',            // Antique cream background
-    anchorX: 268,
-    baselineY: 543,
+    anchorX: 184,                  // Left-aligned flush with 'Dear'
+    baselineY: 578,                // Positioned below 'Dear'
     maskComma: true,
     commaRect: [266, 532, 8, 14],  // [x, y, w, h] to cover baked-in comma
-    maxSafeWidth: 680,
+    maxSafeWidth: 720,
     spec: 'Template 1: Serif Regular (#8A3638)'
   },
   '2': {
@@ -38,10 +38,10 @@ const TEMPLATES = {
     fontSize: 44,
     textColor: '#7A3101',          // Warm bronze: RGB(122, 49, 1)
     bgColor: '#FEEDC1',
-    anchorX: 208,
-    baselineY: 292,
+    anchorX: 106,                  // Left-aligned flush with 'Dear'
+    baselineY: 365,                // Centered in spacious area below 'Dear'
     maskComma: false,
-    maxSafeWidth: 760,
+    maxSafeWidth: 840,
     spec: 'Template 2: Poppins Bold (#7A3101)'
   },
   '3': {
@@ -55,10 +55,10 @@ const TEMPLATES = {
     fontSize: 44,
     textColor: '#7A3101',          // Warm bronze: RGB(122, 49, 1)
     bgColor: '#F3EFE5',
-    anchorX: 230,
-    baselineY: 131,
+    anchorX: 129,                  // Left-aligned flush with 'Dear'
+    baselineY: 205,                // Centered in spacious area below 'Dear'
     maskComma: false,
-    maxSafeWidth: 530,             // Safe distance before Spekctrum logo at x=780
+    maxSafeWidth: 820,
     spec: 'Template 3: Poppins Bold (#7A3101)'
   }
 };

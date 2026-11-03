@@ -21,19 +21,20 @@ TEMPLATES = {
         'name': 'Tricolour & Soldiers',
         'file': os.path.join(TEMPLATES_DIR, 'template1_soldier.jpg'),
         'font_candidates': [
+            os.path.join(ROOT_DIR, 'assets', 'fonts', 'LiberationSerif-Regular.ttf'),
             '/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf',
             '/usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf',
             '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
         ],
-        'font_size': 42,
+        'font_size': 38,
         'text_color': (138, 54, 56),     # #8A3638 (Crimson maroon)
         'bg_color': (251, 243, 232),      # #FBF3E8 (Antique cream)
-        'anchor_x': 268,
-        'anchor_y': 514,
-        'baseline_y': 543,
+        'anchor_x': 184,
+        'anchor_y': 548,
+        'baseline_y': 578,
         'mask_comma': True,
-        'comma_rect': [266, 532, 273, 545],
-        'max_width': 680
+        'comma_rect': [266, 532, 274, 546],
+        'max_width': 720
     },
     '2': {
         'id': '2',
@@ -41,6 +42,7 @@ TEMPLATES = {
         'name': 'Golden Hanging Diyas',
         'file': os.path.join(TEMPLATES_DIR, 'template2_diyas.jpg'),
         'font_candidates': [
+            os.path.join(ROOT_DIR, 'assets', 'fonts', 'LiberationSans-Bold.ttf'),
             '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
             '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
             '/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf'
@@ -48,11 +50,11 @@ TEMPLATES = {
         'font_size': 44,
         'text_color': (122, 49, 1),       # #7A3101 (Warm chocolate brown)
         'bg_color': (254, 237, 193),      # #FEEDC1
-        'anchor_x': 208,
-        'anchor_y': 262,
-        'baseline_y': 292,
+        'anchor_x': 106,
+        'anchor_y': 330,
+        'baseline_y': 365,
         'mask_comma': False,
-        'max_width': 760
+        'max_width': 840
     },
     '3': {
         'id': '3',
@@ -60,6 +62,7 @@ TEMPLATES = {
         'name': 'Corporate Reflections',
         'file': os.path.join(TEMPLATES_DIR, 'template3_corporate.jpg'),
         'font_candidates': [
+            os.path.join(ROOT_DIR, 'assets', 'fonts', 'LiberationSans-Bold.ttf'),
             '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
             '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
             '/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf'
@@ -67,11 +70,11 @@ TEMPLATES = {
         'font_size': 44,
         'text_color': (122, 49, 1),       # #7A3101
         'bg_color': (243, 239, 229),      # #F3EFE5
-        'anchor_x': 230,
-        'anchor_y': 101,
-        'baseline_y': 131,
+        'anchor_x': 129,
+        'anchor_y': 170,
+        'baseline_y': 205,
         'mask_comma': False,
-        'max_width': 530
+        'max_width': 820
     }
 }
 
@@ -98,7 +101,7 @@ def render_card(template_id, name, output_path=None, add_comma=True):
         draw.rectangle(rect, fill=cfg['bg_color'])
     
     name = name.strip()
-    display_text = f" {name}," if add_comma else f" {name}"
+    display_text = f"{name}," if add_comma else f"{name}"
     
     font_size = cfg['font_size']
     font = get_font(cfg['font_candidates'], font_size)

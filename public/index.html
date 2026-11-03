@@ -868,15 +868,15 @@
         file: 'template1_soldier.jpg',
         fontFamily: "'Libre Baskerville', 'Liberation Serif', 'Times New Roman', serif",
         fontWeight: '400',
-        fontSize: 42,
+        fontSize: 38,
         textColor: '#8A3638',
         bgColor: '#FBF3E8',
-        anchorX: 268,
-        anchorY: 514,
-        baselineY: 543,
+        anchorX: 184,
+        anchorY: 548,
+        baselineY: 578,
         maskComma: true,
         commaRect: [266, 532, 8, 14],
-        maxSafeWidth: 680,
+        maxSafeWidth: 720,
         spec: 'Template 1 · Serif #8A3638'
       },
       '2': {
@@ -889,11 +889,11 @@
         fontSize: 44,
         textColor: '#7A3101',
         bgColor: '#FEEDC1',
-        anchorX: 208,
-        anchorY: 262,
-        baselineY: 292,
+        anchorX: 106,
+        anchorY: 330,
+        baselineY: 365,
         maskComma: false,
-        maxSafeWidth: 760,
+        maxSafeWidth: 840,
         spec: 'Template 2 · Poppins #7A3101'
       },
       '3': {
@@ -906,11 +906,11 @@
         fontSize: 44,
         textColor: '#7A3101',
         bgColor: '#F3EFE5',
-        anchorX: 230,
-        anchorY: 101,
-        baselineY: 131,
+        anchorX: 129,
+        anchorY: 170,
+        baselineY: 205,
         maskComma: false,
-        maxSafeWidth: 530,
+        maxSafeWidth: 820,
         spec: 'Template 3 · Poppins #7A3101'
       }
     };
@@ -978,7 +978,7 @@
       if (!rawName) return;
 
       const addComma = appendCommaCheckbox.checked;
-      const displayText = addComma ? ` ${rawName},` : ` ${rawName}`;
+      const displayText = addComma ? `${rawName},` : `${rawName}`;
 
       let fontSize = customFontSize || cfg.fontSize;
       ctx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
@@ -1221,7 +1221,7 @@
             offCtx.fillRect(...cfg.commaRect);
           }
 
-          const displayText = ` ${name},`;
+          const displayText = `${name},`;
           let fontSize = cfg.fontSize;
           offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
           offCtx.textBaseline = 'alphabetic';

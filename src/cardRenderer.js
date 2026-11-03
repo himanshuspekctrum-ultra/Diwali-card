@@ -114,7 +114,7 @@ async function renderCard(templateId, name, options = {}) {
   }
 
   const addComma = options.addComma !== undefined ? options.addComma : true;
-  const displayText = addComma ? ` ${cleanName},` : ` ${cleanName}`;
+  const displayText = addComma ? `${cleanName},` : `${cleanName}`;
 
   // 4. Calculate font family & size
   const chosenFontFamily = (cfg.fontFamily === 'TemplateSerif' && serifRegistered) 
