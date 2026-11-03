@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Spekctrum — Diwali Greeting Studio</title>
   
   <!-- Typography -->
@@ -32,10 +32,17 @@
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    html {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
@@ -43,6 +50,9 @@
       color: var(--text);
       font-family: var(--font-sans);
       min-height: 100vh;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
@@ -146,6 +156,8 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
+      width: 100%;
+      min-width: 0;
     }
 
     /* Segmented Tab Bar */
@@ -155,6 +167,7 @@
       padding: 3px;
       border-radius: 10px;
       display: flex;
+      width: 100%;
     }
 
     .tab-btn {
@@ -187,12 +200,16 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      width: 100%;
+      min-width: 0;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
     }
 
     .section-title {
@@ -211,8 +228,9 @@
     /* Minimal Template Selector */
     .template-selector {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
+      width: 100%;
     }
 
     .template-option {
@@ -226,6 +244,9 @@
       cursor: pointer;
       transition: all 0.15s ease;
       text-align: center;
+      min-width: 0;
+      width: 100%;
+      overflow: hidden;
     }
 
     .template-option:hover {
@@ -250,18 +271,29 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
     .template-name {
       font-size: 11px;
       font-weight: 600;
       color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      display: block;
     }
 
     .template-sub {
       font-size: 10px;
       color: var(--text-dim);
       margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      display: block;
     }
 
     /* Input Field */
@@ -445,6 +477,7 @@
     .position-selector-wrapper {
       margin-top: 14px;
       margin-bottom: 4px;
+      width: 100%;
     }
 
     .selector-label {
@@ -459,19 +492,20 @@
 
     .segmented-control {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       background: var(--surface-subtle);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 3px;
       gap: 4px;
+      width: 100%;
     }
 
     .segment-btn {
       background: transparent;
       border: none;
       border-radius: 7px;
-      padding: 8px 12px;
+      padding: 8px 10px;
       font-size: 12px;
       font-weight: 500;
       color: var(--text-muted);
@@ -482,6 +516,15 @@
       gap: 6px;
       transition: all 0.15s ease;
       font-family: inherit;
+      min-width: 0;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .segment-btn span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .segment-btn:hover {
@@ -502,6 +545,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      width: 100%;
     }
 
     .btn-main {
@@ -532,15 +576,16 @@
 
     .btn-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
+      width: 100%;
     }
 
     .btn-ghost {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 14px;
+      padding: 10px 12px;
       font-size: 12px;
       font-weight: 500;
       color: var(--text-muted);
@@ -551,6 +596,12 @@
       gap: 6px;
       transition: all 0.15s;
       font-family: inherit;
+      min-width: 0;
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .btn-ghost:hover {
@@ -564,10 +615,13 @@
       display: none;
       flex-direction: column;
       gap: 16px;
+      width: 100%;
     }
 
     .bulk-area {
       width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
       background: var(--surface-subtle);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -583,6 +637,8 @@
 
     .bulk-select {
       width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
       background: var(--surface-subtle);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -600,6 +656,8 @@
       align-items: center;
       position: sticky;
       top: 90px;
+      width: 100%;
+      min-width: 0;
     }
 
     .stage-meta {
@@ -608,6 +666,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
       margin-bottom: 12px;
       font-size: 11px;
     }
@@ -644,6 +704,7 @@
 
     #greetingCanvas {
       width: 100%;
+      max-width: 100%;
       height: auto;
       display: block;
     }
@@ -677,6 +738,102 @@
     #toast.show {
       transform: translateY(0);
       opacity: 1;
+    }
+
+    /* Media Queries for Complete Mobile & Tablet Responsiveness */
+    @media (max-width: 1024px) {
+      header {
+        padding: 14px 20px;
+      }
+      main {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 24px 20px;
+      }
+      .stage-wrapper {
+        position: static;
+        top: auto;
+        width: 100%;
+        margin-top: 8px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 12px 16px;
+      }
+      .brand-desc, .brand-sep, .partner-nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 16px 12px;
+        gap: 20px;
+      }
+      .section-card {
+        padding: 16px 14px;
+        border-radius: 14px;
+        gap: 14px;
+      }
+      .btn-main {
+        padding: 13px 16px;
+        font-size: 13px;
+      }
+      .btn-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .btn-ghost {
+        width: 100%;
+        padding: 11px 14px;
+      }
+      .stage-meta {
+        font-size: 10px;
+      }
+      #toast {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        text-align: center;
+        transform: translateY(80px);
+      }
+      #toast.show {
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 420px) {
+      .template-selector {
+        gap: 6px;
+      }
+      .template-option {
+        padding: 6px 4px;
+        border-radius: 10px;
+      }
+      .template-name {
+        font-size: 10px;
+      }
+      .template-sub {
+        font-size: 9px;
+      }
+      .segment-btn {
+        padding: 7px 4px;
+        font-size: 11px;
+        gap: 4px;
+      }
+      .segment-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+      .chip-group {
+        gap: 4px;
+      }
+      .chip {
+        padding: 3px 7px;
+        font-size: 10px;
+      }
     }
   </style>
 </head>
