@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spekctrum — Diwali Greeting Studio</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Offline Base64 Assets -->
+  <script src="assets.js"></script>
+  <!-- Bulk ZIP Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #09090B;
+      --surface: #121215;
+      --surface-subtle: #18181C;
+      --border: #222227;
+      --border-hover: #33333D;
+      --border-active: #E5A93C;
+      --gold: #E5A93C;
+      --gold-dim: rgba(229, 169, 60, 0.12);
+      --text: #F4F4F5;
+      --text-muted: #8E8E96;
+      --text-dim: #52525B;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* Subtle top navigation bar */
+    header {
+      background: rgba(9, 9, 11, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 32px;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #18181C;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .brand-sep {
+      color: var(--border);
+      font-weight: 300;
+    }
+
+    .brand-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .partner-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .partner-nav span.tag {
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Studio Main Stage */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 36px 32px;
+      flex: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding: 20px;
+      }
+    }
+
+    /* Left Control Deck */
+    .deck {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Segmented Tab Bar */
+    .tab-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3px;
+      border-radius: 10px;
+      display: flex;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn.active {
+      background: var(--surface-subtle);
+      color: #FFF;
+      border: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    /* Minimalist Section Card */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .section-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* Minimal Template Selector */
+    .template-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .template-option {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .template-option:hover {
+      border-color: var(--border-hover);
+    }
+
+    .template-option.active {
+      border-color: var(--border-active);
+      background: #171612;
+    }
+
+    .thumb-frame {
+      width: 100%;
+      aspect-ratio: 1132 / 1600;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 8px;
+    }
+
+    .thumb-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .template-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .template-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* Input Field */
+    .input-wrapper {
+      position: relative;
+    }
+
+    .name-input {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      padding-right: 36px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #FFF;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    .name-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px var(--gold-dim);
+    }
+
+    .clear-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .clear-icon:hover { color: var(--text); }
+
+    /* Suggestion Chips */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .chip-label {
+      color: var(--text-dim);
+      margin-right: 2px;
+    }
+
+    .chip {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .chip:hover {
+      background: #202026;
+      color: #FFF;
+      border-color: var(--border-hover);
+    }
+
+    /* Checkbox Line */
+    .checkbox-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .custom-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .custom-check input {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    /* Collapsible Drawer */
+    .drawer-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .drawer-btn:hover { color: var(--text-muted); }
+
+    .drawer-content {
+      display: none;
+      margin-top: 12px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .drawer-content.show { display: flex; }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slider-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .slider-val {
+      font-family: monospace;
+      color: var(--gold);
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      background: var(--border);
+      border-radius: 99px;
+      height: 4px;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+
+    .reset-link {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 11px;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+      margin-top: 2px;
+      text-decoration: underline;
+    }
+
+    /* Action Buttons */
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-main {
+      width: 100%;
+      background: #FFF;
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-main:hover {
+      background: #EAEAEA;
+    }
+
+    .btn-main:active {
+      transform: scale(0.99);
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-ghost {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-subtle);
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+
+    /* Bulk Panel */
+    .bulk-deck {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .bulk-area {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #FFF;
+      outline: none;
+      resize: vertical;
+    }
+
+    .bulk-area:focus { border-color: var(--gold); }
+
+    .bulk-select {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #FFF;
+      font-size: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    /* Right Preview Stage */
+    .stage-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: sticky;
+      top: 90px;
+    }
+
+    .stage-meta {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 11px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+
+    .spec-indicator {
+      font-family: monospace;
+      color: var(--text-dim);
+    }
+
+    .canvas-viewport {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.75);
+    }
+
+    #greetingCanvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .stage-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border-hover);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      transform: translateY(60px);
+      opacity: 0;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MINIMAL HEADER -->
+  <header>
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-mark">🪔</div>
+        <span class="brand-name">Spekctrum</span>
+        <span class="brand-sep">/</span>
+        <span class="brand-desc">Diwali Greeting Studio</span>
+      </div>
+
+      <div class="partner-nav">
+        <span>Ecosystem:</span>
+        <span class="tag">Beemaaa</span>
+        <span class="tag">Investesy</span>
+        <span class="tag">SahiPe</span>
+        <span class="tag">udhāre</span>
+        <span class="tag">TravellEzi</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- WORKSPACE -->
+  <main>
+    
+    <!-- LEFT: CONTROLS -->
+    <div class="deck">
+      
+      <!-- Tab Switcher -->
+      <div class="tab-bar">
+        <button id="tabSingle" class="tab-btn active" onclick="switchTab('single')">Single Card</button>
+        <button id="tabBulk" class="tab-btn" onclick="switchTab('bulk')">Batch Export (ZIP)</button>
+      </div>
+
+      <!-- SINGLE CARD VIEW -->
+      <div id="singleControls" style="display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- Template Selection -->
+        <div class="section-card">
+          <div class="section-header">
+            <span class="section-title">Template</span>
+            <span class="section-meta">Select design</span>
+          </div>
+
+          <div class="template-selector">
+            
+            <div id="btnTemplate1" class="template-option active" onclick="selectTemplate('1')">
+              <div class="thumb-frame">
+                <img src="template1_soldier.jpg" alt="Soldier Tribute">
+              </div>
+              <span class="template-name">Soldier</span>
+              <span class="template-sub">Crimson Serif</span>
+            </div>
+
+            <div id="btnTemplate2" class="template-option" onclick="selectTemplate('2')">
+              <div class="thumb-frame">
+                <img src="template2_diyas.jpg" alt="Golden Diyas">
+              </div>
+              <span class="template-name">Diyas</span>
+              <span class="template-sub">Bronze Sans</span>
+            </div>
+
+            <div id="btnTemplate3" class="template-option" onclick="selectTemplate('3')">
+              <div class="thumb-frame">
+                <img src="template3_corporate.jpg" alt="Corporate Reflections">
+              </div>
+              <span class="template-name">Corporate</span>
+              <span class="template-sub">Executive Sans</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Name Input -->
+        <div class="section-card">
+          <div class="section-header">
+            <span class="section-title">Recipient Name</span>
+            <span class="section-meta">Placed beside <em>"Dear"</em></span>
+          </div>
+
+          <div class="input-wrapper">
+            <input type="text" id="recipientName" class="name-input" value="Rahul Sharma" placeholder="Recipient's full name">
+            <button class="clear-icon" onclick="clearName()">✕</button>
+          </div>
+
+          <div class="chip-group">
+            <span class="chip-label">Suggestions:</span>
+            <button class="chip" onclick="setName('Rahul Sharma')">Rahul Sharma</button>
+            <button class="chip" onclick="setName('Pooja Patel')">Pooja Patel</button>
+            <button class="chip" onclick="setName('Dr. Pankaj Gupta')">Dr. Pankaj Gupta</button>
+          </div>
+
+          <div class="checkbox-line">
+            <label class="custom-check" for="appendComma">
+              <input type="checkbox" id="appendComma" checked onchange="render()">
+              <span>Append comma after name (<em>"Dear [Name],"</em>)</span>
+            </label>
+          </div>
+
+          <!-- Fine Tuning Drawer -->
+          <div>
+            <button class="drawer-btn" onclick="toggleFineTuning()">
+              <span>Fine-Tune Typography & Spacing</span>
+              <span id="fineTuneChevron">▼</span>
+            </button>
+
+            <div id="fineTuningPanel" class="drawer-content">
+              <div class="slider-row">
+                <div class="slider-meta">
+                  <span>Font Size</span>
+                  <span id="fontSizeDisplay" class="slider-val">42 px</span>
+                </div>
+                <input type="range" id="fontSizeSlider" min="28" max="56" value="42" oninput="updateFineTune()">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-meta">
+                  <span>X Position Offset</span>
+                  <span id="xOffsetDisplay" class="slider-val">0 px</span>
+                </div>
+                <input type="range" id="xOffsetSlider" min="-40" max="40" value="0" oninput="updateFineTune()">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-meta">
+                  <span>Y Position Offset</span>
+                  <span id="yOffsetDisplay" class="slider-val">0 px</span>
+                </div>
+                <input type="range" id="yOffsetSlider" min="-20" max="20" value="0" oninput="updateFineTune()">
+              </div>
+
+              <button class="reset-link" onclick="resetFineTune()">Reset to defaults</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="action-group">
+          <button class="btn-main" onclick="downloadCard()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Download Card (1132 × 1600 px)</span>
+          </button>
+
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="copyToClipboard()">
+              Copy to Clipboard
+            </button>
+            <button class="btn-ghost" onclick="renderAllAndDownload()">
+              Export All 3 Designs
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BULK BATCH VIEW -->
+      <div id="bulkControls" class="section-card bulk-deck">
+        <div class="section-header">
+          <span class="section-title">Batch Generation</span>
+          <span class="section-meta">ZIP Archive</span>
+        </div>
+
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:11px;">
+            <span style="color:var(--text-muted)">Names list (one per line)</span>
+            <label style="color:var(--gold); cursor:pointer;">
+              Upload file
+              <input type="file" id="csvFileInput" accept=".txt,.csv" onchange="handleFileUpload(event)" style="display:none;">
+            </label>
+          </div>
+          <textarea id="bulkNames" class="bulk-area" rows="6" placeholder="Rahul Sharma&#10;Pooja Patel&#10;Dr. Pankaj Gupta&#10;Ananya Roy"></textarea>
+          <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:10px; color:var(--text-dim);">
+            <span id="bulkCountLabel">0 names</span>
+            <span>Comma relocation active</span>
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block; margin-bottom:6px; font-size:11px; color:var(--text-muted)">Template Target</label>
+          <select id="bulkTemplateSelect" class="bulk-select">
+            <option value="1">Template 1: Soldier Tribute</option>
+            <option value="2">Template 2: Hanging Diyas</option>
+            <option value="3">Template 3: Corporate Reflections</option>
+            <option value="all" selected>All 3 Templates (3 cards per recipient)</option>
+          </select>
+        </div>
+
+        <div id="bulkProgressArea" style="display:none; flex-direction:column; gap:6px; background:var(--surface-subtle); padding:10px; border-radius:8px; border:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span id="bulkStatusText">Processing...</span>
+            <span id="bulkPercentText" style="color:var(--gold); font-family:monospace;">0%</span>
+          </div>
+          <div style="width:100%; height:4px; background:var(--border); border-radius:99px; overflow:hidden;">
+            <div id="bulkProgressBar" style="width:0%; height:100%; background:var(--gold); transition:width 0.15s;"></div>
+          </div>
+        </div>
+
+        <button id="btnStartBulk" class="btn-main" onclick="startBulkGeneration()">
+          Generate & Download ZIP Archive
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: PREVIEW STAGE -->
+    <div class="stage-wrapper">
+      <div class="stage-meta">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span>Canvas Live Viewport</span>
+        </div>
+        <div class="spec-indicator" id="templateSpecBadge">
+          Template 1 · Serif #8A3638
+        </div>
+      </div>
+
+      <div class="canvas-viewport">
+        <canvas id="greetingCanvas" width="1132" height="1600"></canvas>
+      </div>
+
+      <p class="stage-note">
+        Native uncompressed output at 1132 × 1600 px for print, WhatsApp, and email.
+      </p>
+    </div>
+
+  </main>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast">
+    <span id="toastMsg">Action complete</span>
+  </div>
+
+  <canvas id="offscreenCanvas" width="1132" height="1600" style="display:none;"></canvas>
+
+  <script>
+    const TEMPLATES = {
+      '1': {
+        id: '1',
+        key: 'soldier',
+        name: 'Tricolour & Soldiers',
+        file: 'template1_soldier.jpg',
+        fontFamily: "'Libre Baskerville', 'Liberation Serif', 'Times New Roman', serif",
+        fontWeight: '400',
+        fontSize: 42,
+        textColor: '#8A3638',
+        bgColor: '#FBF3E8',
+        anchorX: 268,
+        anchorY: 514,
+        baselineY: 543,
+        maskComma: true,
+        commaRect: [266, 532, 8, 14],
+        maxSafeWidth: 680,
+        spec: 'Template 1 · Serif #8A3638'
+      },
+      '2': {
+        id: '2',
+        key: 'diyas',
+        name: 'Golden Hanging Diyas',
+        file: 'template2_diyas.jpg',
+        fontFamily: "'Poppins', sans-serif",
+        fontWeight: '700',
+        fontSize: 44,
+        textColor: '#7A3101',
+        bgColor: '#FEEDC1',
+        anchorX: 208,
+        anchorY: 262,
+        baselineY: 292,
+        maskComma: false,
+        maxSafeWidth: 760,
+        spec: 'Template 2 · Poppins #7A3101'
+      },
+      '3': {
+        id: '3',
+        key: 'corporate',
+        name: 'Corporate Reflections',
+        file: 'template3_corporate.jpg',
+        fontFamily: "'Poppins', sans-serif",
+        fontWeight: '700',
+        fontSize: 44,
+        textColor: '#7A3101',
+        bgColor: '#F3EFE5',
+        anchorX: 230,
+        anchorY: 101,
+        baselineY: 131,
+        maskComma: false,
+        maxSafeWidth: 530,
+        spec: 'Template 3 · Poppins #7A3101'
+      }
+    };
+
+    let currentTemplateId = '1';
+    let loadedImages = {};
+    let customFontSize = null;
+    let customOffsetX = 0;
+    let customOffsetY = 0;
+
+    const canvas = document.getElementById('greetingCanvas');
+    const ctx = canvas.getContext('2d');
+    const nameInput = document.getElementById('recipientName');
+    const appendCommaCheckbox = document.getElementById('appendComma');
+
+    function preloadImages(callback) {
+      let loaded = 0;
+      const ids = ['1', '2', '3'];
+      ids.forEach(id => {
+        const img = new Image();
+        const src = (window.TEMPLATE_ASSETS && window.TEMPLATE_ASSETS[id]) 
+                    ? window.TEMPLATE_ASSETS[id] 
+                    : TEMPLATES[id].file;
+        img.src = src;
+        img.onload = () => {
+          loadedImages[id] = img;
+          loaded++;
+          if (loaded === ids.length) {
+            if (callback) callback();
+          }
+        };
+      });
+    }
+
+    function selectTemplate(id) {
+      currentTemplateId = id;
+      ['1', '2', '3'].forEach(i => {
+        const btn = document.getElementById(`btnTemplate${i}`);
+        if (i === id) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      document.getElementById('templateSpecBadge').innerText = TEMPLATES[id].spec;
+      resetFineTune();
+      render();
+    }
+
+    function render() {
+      const cfg = TEMPLATES[currentTemplateId];
+      const img = loadedImages[currentTemplateId];
+      if (!img) return;
+
+      ctx.clearRect(0, 0, 1132, 1600);
+      ctx.drawImage(img, 0, 0, 1132, 1600);
+
+      if (cfg.maskComma) {
+        ctx.fillStyle = cfg.bgColor;
+        ctx.fillRect(...cfg.commaRect);
+      }
+
+      let rawName = nameInput.value.trim();
+      if (!rawName) return;
+
+      const addComma = appendCommaCheckbox.checked;
+      const displayText = addComma ? ` ${rawName},` : ` ${rawName}`;
+
+      let fontSize = customFontSize || cfg.fontSize;
+      ctx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
+      ctx.textBaseline = 'alphabetic';
+
+      let textWidth = ctx.measureText(displayText).width;
+      while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+        fontSize -= 2;
+        ctx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
+        textWidth = ctx.measureText(displayText).width;
+      }
+
+      const renderX = cfg.anchorX + customOffsetX;
+      const renderY = cfg.baselineY + customOffsetY;
+
+      ctx.fillStyle = cfg.textColor;
+      ctx.fillText(displayText, renderX, renderY);
+    }
+
+    function setName(name) {
+      nameInput.value = name;
+      render();
+    }
+
+    function clearName() {
+      nameInput.value = '';
+      render();
+    }
+
+    nameInput.addEventListener('input', () => {
+      render();
+    });
+
+    function toggleFineTuning() {
+      const panel = document.getElementById('fineTuningPanel');
+      const chev = document.getElementById('fineTuneChevron');
+      const isOpen = panel.classList.contains('show');
+      if (isOpen) {
+        panel.classList.remove('show');
+        chev.innerText = '▼';
+      } else {
+        panel.classList.add('show');
+        chev.innerText = '▲';
+      }
+    }
+
+    function updateFineTune() {
+      customFontSize = parseInt(document.getElementById('fontSizeSlider').value);
+      customOffsetX = parseInt(document.getElementById('xOffsetSlider').value);
+      customOffsetY = parseInt(document.getElementById('yOffsetSlider').value);
+
+      document.getElementById('fontSizeDisplay').innerText = `${customFontSize} px`;
+      document.getElementById('xOffsetDisplay').innerText = `${customOffsetX} px`;
+      document.getElementById('yOffsetDisplay').innerText = `${customOffsetY} px`;
+
+      render();
+    }
+
+    function resetFineTune() {
+      const cfg = TEMPLATES[currentTemplateId];
+      customFontSize = cfg.fontSize;
+      customOffsetX = 0;
+      customOffsetY = 0;
+
+      document.getElementById('fontSizeSlider').value = cfg.fontSize;
+      document.getElementById('xOffsetSlider').value = 0;
+      document.getElementById('yOffsetSlider').value = 0;
+
+      document.getElementById('fontSizeDisplay').innerText = `${cfg.fontSize} px`;
+      document.getElementById('xOffsetDisplay').innerText = `0 px`;
+      document.getElementById('yOffsetDisplay').innerText = `0 px`;
+
+      render();
+    }
+
+    function downloadCard() {
+      const name = nameInput.value.trim() || 'Greeting';
+      const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const cfg = TEMPLATES[currentTemplateId];
+      const filename = `Diwali_Greeting_${safeName}_Template_${currentTemplateId}_${cfg.key}.jpg`;
+
+      canvas.toBlob(blob => {
+        if (window.saveAs) {
+          saveAs(blob, filename);
+        } else {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = filename;
+          a.click();
+        }
+        showToast(`Downloaded ${filename}`);
+      }, 'image/jpeg', 0.98);
+    }
+
+    async function copyToClipboard() {
+      try {
+        canvas.toBlob(async blob => {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          showToast('Image copied to clipboard');
+        }, 'image/png');
+      } catch (err) {
+        showToast('Clipboard not supported');
+      }
+    }
+
+    async function renderAllAndDownload() {
+      const name = nameInput.value.trim();
+      if (!name) {
+        alert('Please enter a recipient name.');
+        return;
+      }
+      if (!window.JSZip) {
+        alert('Zip library loading...');
+        return;
+      }
+      const zip = new JSZip();
+      const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const offCanvas = document.getElementById('offscreenCanvas');
+      const offCtx = offCanvas.getContext('2d');
+
+      showToast('Exporting all 3 designs...');
+
+      for (let id of ['1', '2', '3']) {
+        const cfg = TEMPLATES[id];
+        const img = loadedImages[id];
+        offCtx.clearRect(0, 0, 1132, 1600);
+        offCtx.drawImage(img, 0, 0, 1132, 1600);
+
+        if (cfg.maskComma) {
+          offCtx.fillStyle = cfg.bgColor;
+          offCtx.fillRect(...cfg.commaRect);
+        }
+
+        const addComma = appendCommaCheckbox.checked;
+        const displayText = addComma ? ` ${name},` : ` ${name}`;
+
+        let fontSize = cfg.fontSize;
+        offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
+        offCtx.textBaseline = 'alphabetic';
+
+        let textWidth = offCtx.measureText(displayText).width;
+        while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+          fontSize -= 2;
+          offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
+          textWidth = offCtx.measureText(displayText).width;
+        }
+
+        offCtx.fillStyle = cfg.textColor;
+        offCtx.fillText(displayText, cfg.anchorX, cfg.baselineY);
+
+        const dataUrl = offCanvas.toDataURL('image/jpeg', 0.98);
+        const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
+        zip.file(`Diwali_Greeting_${safeName}_Template_${id}_${cfg.key}.jpg`, base64Data, { base64: true });
+      }
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, `Diwali_Greetings_${safeName}_All_Templates.zip`);
+      showToast('Downloaded 3-card ZIP archive');
+    }
+
+    function switchTab(mode) {
+      const tabSingle = document.getElementById('tabSingle');
+      const tabBulk = document.getElementById('tabBulk');
+      const singleCtrls = document.getElementById('singleControls');
+      const bulkCtrls = document.getElementById('bulkControls');
+
+      if (mode === 'single') {
+        tabSingle.classList.add('active');
+        tabBulk.classList.remove('active');
+        singleCtrls.style.display = 'flex';
+        bulkCtrls.style.display = 'none';
+      } else {
+        tabBulk.classList.add('active');
+        tabSingle.classList.remove('active');
+        bulkCtrls.style.display = 'flex';
+        singleCtrls.style.display = 'none';
+        updateBulkCount();
+      }
+    }
+
+    const bulkTextarea = document.getElementById('bulkNames');
+    bulkTextarea.addEventListener('input', updateBulkCount);
+
+    function updateBulkCount() {
+      const lines = bulkTextarea.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      document.getElementById('bulkCountLabel').innerText = `${lines.length} names`;
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        bulkTextarea.value = evt.target.result;
+        updateBulkCount();
+      };
+      reader.readAsText(file);
+    }
+
+    async function startBulkGeneration() {
+      const lines = bulkTextarea.value.split('\n').map(l => l.trim().replace(/^["',]+|["',]+$/g, '')).filter(l => l.length > 0);
+      if (lines.length === 0) {
+        alert('Please enter at least one recipient name.');
+        return;
+      }
+
+      const selectedOpt = document.getElementById('bulkTemplateSelect').value;
+      const templateList = selectedOpt === 'all' ? ['1', '2', '3'] : [selectedOpt];
+
+      const progressArea = document.getElementById('bulkProgressArea');
+      const progressBar = document.getElementById('bulkProgressBar');
+      const statusText = document.getElementById('bulkStatusText');
+      const percentText = document.getElementById('bulkPercentText');
+      const btn = document.getElementById('btnStartBulk');
+
+      progressArea.style.display = 'flex';
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+
+      const zip = new JSZip();
+      const offCanvas = document.getElementById('offscreenCanvas');
+      const offCtx = offCanvas.getContext('2d');
+
+      const totalOperations = lines.length * templateList.length;
+      let completed = 0;
+
+      for (let name of lines) {
+        const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
+        for (let tId of templateList) {
+          const cfg = TEMPLATES[tId];
+          const img = loadedImages[tId];
+
+          offCtx.clearRect(0, 0, 1132, 1600);
+          offCtx.drawImage(img, 0, 0, 1132, 1600);
+
+          if (cfg.maskComma) {
+            offCtx.fillStyle = cfg.bgColor;
+            offCtx.fillRect(...cfg.commaRect);
+          }
+
+          const displayText = ` ${name},`;
+          let fontSize = cfg.fontSize;
+          offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
+          offCtx.textBaseline = 'alphabetic';
+
+          let textWidth = offCtx.measureText(displayText).width;
+          while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+            fontSize -= 2;
+            offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
+            textWidth = offCtx.measureText(displayText).width;
+          }
+
+          offCtx.fillStyle = cfg.textColor;
+          offCtx.fillText(displayText, cfg.anchorX, cfg.baselineY);
+
+          const dataUrl = offCanvas.toDataURL('image/jpeg', 0.95);
+          const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
+          zip.file(`Diwali_Card_${safeName}_Template_${tId}_${cfg.key}.jpg`, base64Data, { base64: true });
+
+          completed++;
+          const pct = Math.round((completed / totalOperations) * 100);
+          progressBar.style.width = `${pct}%`;
+          percentText.innerText = `${pct}%`;
+          statusText.innerText = `Generating (${completed}/${totalOperations}): ${name}`;
+
+          if (completed % 3 === 0) {
+            await new Promise(r => setTimeout(r, 10));
+          }
+        }
+      }
+
+      statusText.innerText = 'Compressing...';
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      saveAs(zipBlob, `Diwali_Greetings_Batch_${lines.length}_Recipients.zip`);
+
+      statusText.innerText = 'Completed';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      showToast(`Generated ${totalOperations} greeting cards`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    window.addEventListener('load', () => {
+      preloadImages(() => {
+        render();
+      });
+    });
+  </script>
+</body>
+</html>
