@@ -7,14 +7,20 @@ const fs = require('fs');
 const { createCanvas, loadImage, GlobalFonts } = require('@napi-rs/canvas');
 const { TEMPLATES } = require('./config');
 
-// Register system TrueType fonts
+// Register TrueType fonts (bundled first for Vercel/serverless portability, fallback to system)
+const path = require('path');
+const BUNDLED_SERIF = path.join(__dirname, '..', 'assets', 'fonts', 'LiberationSerif-Regular.ttf');
+const BUNDLED_SANS = path.join(__dirname, '..', 'assets', 'fonts', 'LiberationSans-Bold.ttf');
+
 const SERIF_FONTS = [
+  BUNDLED_SERIF,
   '/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf',
   '/usr/share/fonts/truetype/noto/NotoSerif-Regular.ttf',
   '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
 ];
 
 const SANS_FONTS = [
+  BUNDLED_SANS,
   '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
   '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
   '/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf'

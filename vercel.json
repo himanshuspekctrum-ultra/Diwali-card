@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "echo 'Vercel build complete'",
+  "outputDirectory": "public",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    }
+  ]
+}
