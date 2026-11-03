@@ -441,6 +441,62 @@
       text-decoration: underline;
     }
 
+    /* Segmented Position Toggle */
+    .position-selector-wrapper {
+      margin-top: 14px;
+      margin-bottom: 4px;
+    }
+
+    .selector-label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+
+    .segmented-control {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 4px;
+    }
+
+    .segment-btn {
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .segment-btn:hover {
+      color: #FFF;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .segment-btn.active {
+      background: var(--surface);
+      color: var(--gold);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(212, 163, 89, 0.25);
+      font-weight: 600;
+    }
+
     /* Action Buttons */
     .action-group {
       display: flex;
@@ -702,7 +758,7 @@
         <div class="section-card">
           <div class="section-header">
             <span class="section-title">Recipient Name</span>
-            <span class="section-meta">Placed beside <em>"Dear"</em></span>
+            <span class="section-meta">Placed around <em>"Dear"</em></span>
           </div>
 
           <div class="input-wrapper">
@@ -715,6 +771,21 @@
             <button class="chip" onclick="setName('Rahul Sharma')">Rahul Sharma</button>
             <button class="chip" onclick="setName('Pooja Patel')">Pooja Patel</button>
             <button class="chip" onclick="setName('Dr. Pankaj Gupta')">Dr. Pankaj Gupta</button>
+          </div>
+
+          <!-- Position Selector (Bottom vs Side) -->
+          <div class="position-selector-wrapper">
+            <span class="selector-label">Name Placement</span>
+            <div class="segmented-control">
+              <button type="button" class="segment-btn active" id="posBtnBottom" onclick="setPosition('bottom')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                <span>Below "Dear"</span>
+              </button>
+              <button type="button" class="segment-btn" id="posBtnSide" onclick="setPosition('side')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span>Beside "Dear"</span>
+              </button>
+            </div>
           </div>
 
           <div class="checkbox-line">
@@ -812,6 +883,14 @@
           </select>
         </div>
 
+        <div>
+          <label style="display:block; margin-bottom:6px; font-size:11px; color:var(--text-muted)">Placement</label>
+          <select id="bulkPositionSelect" class="bulk-select">
+            <option value="bottom" selected>Below "Dear" (Underneath)</option>
+            <option value="side">Beside "Dear" (Same line)</option>
+          </select>
+        </div>
+
         <div id="bulkProgressArea" style="display:none; flex-direction:column; gap:6px; background:var(--surface-subtle); padding:10px; border-radius:8px; border:1px solid var(--border);">
           <div style="display:flex; justify-content:space-between; font-size:11px;">
             <span id="bulkStatusText">Processing...</span>
@@ -868,15 +947,28 @@
         file: 'template1_soldier.jpg',
         fontFamily: "'Libre Baskerville', 'Liberation Serif', 'Times New Roman', serif",
         fontWeight: '400',
-        fontSize: 38,
         textColor: '#8A3638',
         bgColor: '#FBF3E8',
-        anchorX: 184,
-        anchorY: 548,
-        baselineY: 578,
         maskComma: true,
         commaRect: [266, 532, 8, 14],
-        maxSafeWidth: 720,
+        positions: {
+          bottom: {
+            anchorX: 184,
+            anchorY: 548,
+            baselineY: 578,
+            fontSize: 38,
+            maxSafeWidth: 720,
+            leadingSpace: false
+          },
+          side: {
+            anchorX: 268,
+            anchorY: 514,
+            baselineY: 543,
+            fontSize: 42,
+            maxSafeWidth: 680,
+            leadingSpace: true
+          }
+        },
         spec: 'Template 1 · Serif #8A3638'
       },
       '2': {
@@ -886,14 +978,27 @@
         file: 'template2_diyas.jpg',
         fontFamily: "'Poppins', sans-serif",
         fontWeight: '700',
-        fontSize: 44,
         textColor: '#7A3101',
         bgColor: '#FEEDC1',
-        anchorX: 106,
-        anchorY: 330,
-        baselineY: 365,
         maskComma: false,
-        maxSafeWidth: 840,
+        positions: {
+          bottom: {
+            anchorX: 106,
+            anchorY: 330,
+            baselineY: 365,
+            fontSize: 44,
+            maxSafeWidth: 840,
+            leadingSpace: false
+          },
+          side: {
+            anchorX: 208,
+            anchorY: 262,
+            baselineY: 292,
+            fontSize: 44,
+            maxSafeWidth: 760,
+            leadingSpace: true
+          }
+        },
         spec: 'Template 2 · Poppins #7A3101'
       },
       '3': {
@@ -903,19 +1008,33 @@
         file: 'template3_corporate.jpg',
         fontFamily: "'Poppins', sans-serif",
         fontWeight: '700',
-        fontSize: 44,
         textColor: '#7A3101',
         bgColor: '#F3EFE5',
-        anchorX: 129,
-        anchorY: 170,
-        baselineY: 205,
         maskComma: false,
-        maxSafeWidth: 820,
+        positions: {
+          bottom: {
+            anchorX: 129,
+            anchorY: 170,
+            baselineY: 205,
+            fontSize: 44,
+            maxSafeWidth: 820,
+            leadingSpace: false
+          },
+          side: {
+            anchorX: 230,
+            anchorY: 101,
+            baselineY: 131,
+            fontSize: 44,
+            maxSafeWidth: 530,
+            leadingSpace: true
+          }
+        },
         spec: 'Template 3 · Poppins #7A3101'
       }
     };
 
     let currentTemplateId = '1';
+    let currentPosition = 'bottom';
     let loadedImages = {};
     let customFontSize = null;
     let customOffsetX = 0;
@@ -961,10 +1080,24 @@
       render();
     }
 
+    function setPosition(pos) {
+      currentPosition = pos;
+      const btnBottom = document.getElementById('posBtnBottom');
+      const btnSide = document.getElementById('posBtnSide');
+      if (btnBottom && btnSide) {
+        btnBottom.classList.toggle('active', pos === 'bottom');
+        btnSide.classList.toggle('active', pos === 'side');
+      }
+      resetFineTune();
+      render();
+    }
+
     function render() {
       const cfg = TEMPLATES[currentTemplateId];
       const img = loadedImages[currentTemplateId];
       if (!img) return;
+
+      const posCfg = (cfg.positions && cfg.positions[currentPosition]) ? cfg.positions[currentPosition] : cfg.positions.bottom;
 
       ctx.clearRect(0, 0, 1132, 1600);
       ctx.drawImage(img, 0, 0, 1132, 1600);
@@ -978,21 +1111,22 @@
       if (!rawName) return;
 
       const addComma = appendCommaCheckbox.checked;
-      const displayText = addComma ? `${rawName},` : `${rawName}`;
+      const prefix = posCfg.leadingSpace ? ' ' : '';
+      const displayText = addComma ? `${prefix}${rawName},` : `${prefix}${rawName}`;
 
-      let fontSize = customFontSize || cfg.fontSize;
+      let fontSize = customFontSize || posCfg.fontSize;
       ctx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
       ctx.textBaseline = 'alphabetic';
 
       let textWidth = ctx.measureText(displayText).width;
-      while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+      while (textWidth > posCfg.maxSafeWidth && fontSize > 20) {
         fontSize -= 2;
         ctx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
         textWidth = ctx.measureText(displayText).width;
       }
 
-      const renderX = cfg.anchorX + customOffsetX;
-      const renderY = cfg.baselineY + customOffsetY;
+      const renderX = posCfg.anchorX + customOffsetX;
+      const renderY = posCfg.baselineY + customOffsetY;
 
       ctx.fillStyle = cfg.textColor;
       ctx.fillText(displayText, renderX, renderY);
@@ -1039,15 +1173,16 @@
 
     function resetFineTune() {
       const cfg = TEMPLATES[currentTemplateId];
-      customFontSize = cfg.fontSize;
+      const posCfg = (cfg.positions && cfg.positions[currentPosition]) ? cfg.positions[currentPosition] : cfg.positions.bottom;
+      customFontSize = posCfg.fontSize;
       customOffsetX = 0;
       customOffsetY = 0;
 
-      document.getElementById('fontSizeSlider').value = cfg.fontSize;
+      document.getElementById('fontSizeSlider').value = posCfg.fontSize;
       document.getElementById('xOffsetSlider').value = 0;
       document.getElementById('yOffsetSlider').value = 0;
 
-      document.getElementById('fontSizeDisplay').innerText = `${cfg.fontSize} px`;
+      document.getElementById('fontSizeDisplay').innerText = `${posCfg.fontSize} px`;
       document.getElementById('xOffsetDisplay').innerText = `0 px`;
       document.getElementById('yOffsetDisplay').innerText = `0 px`;
 
@@ -1058,7 +1193,7 @@
       const name = nameInput.value.trim() || 'Greeting';
       const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
       const cfg = TEMPLATES[currentTemplateId];
-      const filename = `Diwali_Greeting_${safeName}_Template_${currentTemplateId}_${cfg.key}.jpg`;
+      const filename = `Diwali_Greeting_${safeName}_Template_${currentTemplateId}_${cfg.key}_${currentPosition}.jpg`;
 
       canvas.toBlob(blob => {
         if (window.saveAs) {
@@ -1105,6 +1240,7 @@
 
       for (let id of ['1', '2', '3']) {
         const cfg = TEMPLATES[id];
+        const posCfg = (cfg.positions && cfg.positions[currentPosition]) ? cfg.positions[currentPosition] : cfg.positions.bottom;
         const img = loadedImages[id];
         offCtx.clearRect(0, 0, 1132, 1600);
         offCtx.drawImage(img, 0, 0, 1132, 1600);
@@ -1115,29 +1251,30 @@
         }
 
         const addComma = appendCommaCheckbox.checked;
-        const displayText = addComma ? ` ${name},` : ` ${name}`;
+        const prefix = posCfg.leadingSpace ? ' ' : '';
+        const displayText = addComma ? `${prefix}${name},` : `${prefix}${name}`;
 
-        let fontSize = cfg.fontSize;
+        let fontSize = posCfg.fontSize;
         offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
         offCtx.textBaseline = 'alphabetic';
 
         let textWidth = offCtx.measureText(displayText).width;
-        while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+        while (textWidth > posCfg.maxSafeWidth && fontSize > 20) {
           fontSize -= 2;
           offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
           textWidth = offCtx.measureText(displayText).width;
         }
 
         offCtx.fillStyle = cfg.textColor;
-        offCtx.fillText(displayText, cfg.anchorX, cfg.baselineY);
+        offCtx.fillText(displayText, posCfg.anchorX, posCfg.baselineY);
 
         const dataUrl = offCanvas.toDataURL('image/jpeg', 0.98);
         const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
-        zip.file(`Diwali_Greeting_${safeName}_Template_${id}_${cfg.key}.jpg`, base64Data, { base64: true });
+        zip.file(`Diwali_Greeting_${safeName}_Template_${id}_${cfg.key}_${currentPosition}.jpg`, base64Data, { base64: true });
       }
 
       const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, `Diwali_Greetings_${safeName}_All_Templates.zip`);
+      saveAs(content, `Diwali_Greetings_${safeName}_All_Templates_${currentPosition}.zip`);
       showToast('Downloaded 3-card ZIP archive');
     }
 
@@ -1188,6 +1325,7 @@
       }
 
       const selectedOpt = document.getElementById('bulkTemplateSelect').value;
+      const selectedPos = (document.getElementById('bulkPositionSelect') && document.getElementById('bulkPositionSelect').value) || 'bottom';
       const templateList = selectedOpt === 'all' ? ['1', '2', '3'] : [selectedOpt];
 
       const progressArea = document.getElementById('bulkProgressArea');
@@ -1211,6 +1349,7 @@
         const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
         for (let tId of templateList) {
           const cfg = TEMPLATES[tId];
+          const posCfg = (cfg.positions && cfg.positions[selectedPos]) ? cfg.positions[selectedPos] : cfg.positions.bottom;
           const img = loadedImages[tId];
 
           offCtx.clearRect(0, 0, 1132, 1600);
@@ -1221,24 +1360,25 @@
             offCtx.fillRect(...cfg.commaRect);
           }
 
-          const displayText = `${name},`;
-          let fontSize = cfg.fontSize;
+          const prefix = posCfg.leadingSpace ? ' ' : '';
+          const displayText = `${prefix}${name},`;
+          let fontSize = posCfg.fontSize;
           offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
           offCtx.textBaseline = 'alphabetic';
 
           let textWidth = offCtx.measureText(displayText).width;
-          while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+          while (textWidth > posCfg.maxSafeWidth && fontSize > 20) {
             fontSize -= 2;
             offCtx.font = `${cfg.fontWeight} ${fontSize}px ${cfg.fontFamily}`;
             textWidth = offCtx.measureText(displayText).width;
           }
 
           offCtx.fillStyle = cfg.textColor;
-          offCtx.fillText(displayText, cfg.anchorX, cfg.baselineY);
+          offCtx.fillText(displayText, posCfg.anchorX, posCfg.baselineY);
 
           const dataUrl = offCanvas.toDataURL('image/jpeg', 0.95);
           const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
-          zip.file(`Diwali_Card_${safeName}_Template_${tId}_${cfg.key}.jpg`, base64Data, { base64: true });
+          zip.file(`Diwali_Card_${safeName}_Template_${tId}_${cfg.key}_${selectedPos}.jpg`, base64Data, { base64: true });
 
           completed++;
           const pct = Math.round((completed / totalOperations) * 100);

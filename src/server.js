@@ -109,15 +109,16 @@ app.get(['/api/card', '/card'], async (req, res) => {
     const templateId = String(req.query.template || '1');
     const isDownload = req.query.download === 'true' || req.query.download === '1';
     const addComma = req.query.comma !== 'false';
+    const position = (req.query.position || 'bottom').toLowerCase();
 
     if (!TEMPLATES[templateId]) {
       return res.status(400).json({ error: `Invalid template ID: ${templateId}. Available: '1', '2', or '3'.` });
     }
 
-    const jpegBuffer = await renderCard(templateId, name, { addComma });
+    const jpegBuffer = await renderCard(templateId, name, { addComma, position });
     const cfg = TEMPLATES[templateId];
     const safeName = name.replace(/[^a-zA-Z0-9 _-]/g, '_');
-    const filename = `Diwali_Greeting_${safeName}_Template_${templateId}_${cfg.key}.jpg`;
+    const filename = `Diwali_Greeting_${safeName}_Template_${templateId}_${cfg.key}_${position}.jpg`;
 
     res.set({
       'Content-Type': 'image/jpeg',
@@ -144,7 +145,7 @@ app.get(['/api/card', '/card'], async (req, res) => {
  */
 app.post(['/api/batch', '/batch'], async (req, res) => {
   try {
-    const { names, template = 'all', comma = true } = req.body;
+    const { names, template = 'all', comma = true, position = 'bottom' } = req.body;
     if (!Array.isArray(names) || names.length === 0) {
       return res.status(400).json({ error: 'Please provide an array of names in "names".' });
     }
@@ -166,10 +167,10 @@ app.post(['/api/batch', '/batch'], async (req, res) => {
         const cfg = TEMPLATES[tId];
         if (!cfg) continue;
 
-        const filename = `Diwali_Greeting_${safeName}_Template_${tId}_${cfg.key}.jpg`;
+        const filename = `Diwali_Greeting_${safeName}_Template_${tId}_${cfg.key}_${position}.jpg`;
         const filePath = path.join(batchDir, filename);
 
-        const jpegBuffer = await renderCard(tId, name, { addComma: comma });
+        const jpegBuffer = await renderCard(tId, name, { addComma: comma, position });
         try {
           fs.writeFileSync(filePath, jpegBuffer);
         } catch (_) {}

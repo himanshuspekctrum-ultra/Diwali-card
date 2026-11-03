@@ -113,8 +113,13 @@ async function renderCard(templateId, name, options = {}) {
     return canvas.encode('jpeg', 98);
   }
 
+  const position = (options.position === 'side' || options.position === 'beside') ? 'side' : 'bottom';
+  const posCfg = (cfg.positions && cfg.positions[position]) ? cfg.positions[position] : cfg;
+
   const addComma = options.addComma !== undefined ? options.addComma : true;
-  const displayText = addComma ? `${cleanName},` : `${cleanName}`;
+  const hasLeadingSpace = posCfg.leadingSpace !== undefined ? posCfg.leadingSpace : (position === 'side');
+  const prefix = hasLeadingSpace ? ' ' : '';
+  const displayText = addComma ? `${prefix}${cleanName},` : `${prefix}${cleanName}`;
 
   // 4. Calculate font family & size
   const chosenFontFamily = (cfg.fontFamily === 'TemplateSerif' && serifRegistered) 
@@ -123,21 +128,22 @@ async function renderCard(templateId, name, options = {}) {
       ? 'TemplateSansBold' 
       : cfg.fallbackFamily;
 
-  let fontSize = options.fontSize || cfg.fontSize;
+  let fontSize = options.fontSize || posCfg.fontSize || cfg.fontSize;
   ctx.font = `${cfg.fontWeight} ${fontSize}px ${chosenFontFamily}`;
   ctx.textBaseline = 'alphabetic';
 
   // Dynamic auto-scaling to prevent overflow
+  const maxSafeWidth = posCfg.maxSafeWidth || cfg.maxSafeWidth;
   let textWidth = ctx.measureText(displayText).width;
-  while (textWidth > cfg.maxSafeWidth && fontSize > 20) {
+  while (textWidth > maxSafeWidth && fontSize > 20) {
     fontSize -= 2;
     ctx.font = `${cfg.fontWeight} ${fontSize}px ${chosenFontFamily}`;
     textWidth = ctx.measureText(displayText).width;
   }
 
   // 5. Draw text at baseline
-  const renderX = cfg.anchorX + (options.xOffset || 0);
-  const renderY = cfg.baselineY + (options.yOffset || 0);
+  const renderX = (options.anchorX !== undefined ? options.anchorX : posCfg.anchorX) + (options.xOffset || 0);
+  const renderY = (options.baselineY !== undefined ? options.baselineY : posCfg.baselineY) + (options.yOffset || 0);
 
   ctx.fillStyle = cfg.textColor;
   ctx.fillText(displayText, renderX, renderY);

@@ -18,6 +18,7 @@ function parseArgs() {
     name: null,
     file: null,
     template: 'all',
+    position: 'bottom',
     outdir: path.join(ROOT_DIR, 'output'),
     addComma: true
   };
@@ -30,6 +31,8 @@ function parseArgs() {
       options.file = args[++i];
     } else if (arg === '--template' && args[i + 1]) {
       options.template = args[++i];
+    } else if (arg === '--position' && args[i + 1]) {
+      options.position = args[++i].toLowerCase();
     } else if (arg === '--outdir' && args[i + 1]) {
       options.outdir = path.resolve(args[++i]);
     } else if (arg === '--no-comma') {
@@ -121,11 +124,11 @@ async function main() {
         continue;
       }
 
-      const filename = `Diwali_Greeting_${safeName}_Template_${tId}_${cfg.key}.jpg`;
+      const filename = `Diwali_Greeting_${safeName}_Template_${tId}_${cfg.key}_${options.position}.jpg`;
       const outPath = path.join(options.outdir, filename);
 
       try {
-        const jpegBuffer = await renderCard(tId, name, { addComma: options.addComma });
+        const jpegBuffer = await renderCard(tId, name, { addComma: options.addComma, position: options.position });
         fs.writeFileSync(outPath, jpegBuffer);
         console.log(`  ✓ Generated [Template ${tId}]: ${filename}`);
       } catch (err) {
