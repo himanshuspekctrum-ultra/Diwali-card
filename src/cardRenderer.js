@@ -50,10 +50,32 @@ const imageCache = {};
 async function getTemplateImage(templateId) {
   if (!imageCache[templateId]) {
     const cfg = TEMPLATES[templateId];
-    if (!cfg || !fs.existsSync(cfg.file)) {
-      throw new Error(`Template image not found: ${cfg ? cfg.file : templateId}`);
+    if (!cfg) {
+      throw new Error(`Template config not found: ${templateId}`);
     }
-    imageCache[templateId] = await loadImage(cfg.file);
+    const basename = path.basename(cfg.file);
+    const candidates = [
+      cfg.file,
+      path.join(__dirname, '..', 'assets', 'templates', basename),
+      path.join(__dirname, '..', 'public', basename),
+      path.join(__dirname, '..', basename),
+      path.join(process.cwd(), 'assets', 'templates', basename),
+      path.join(process.cwd(), 'public', basename),
+      path.join(process.cwd(), basename)
+    ];
+
+    let foundPath = null;
+    for (const c of candidates) {
+      if (fs.existsSync(c)) {
+        foundPath = c;
+        break;
+      }
+    }
+
+    if (!foundPath) {
+      throw new Error(`Template image not found: ${basename}`);
+    }
+    imageCache[templateId] = await loadImage(foundPath);
   }
   return imageCache[templateId];
 }

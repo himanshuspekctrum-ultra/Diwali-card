@@ -14,15 +14,77 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const OUTPUT_DIR = path.join(ROOT_DIR, 'output');
 
+// Helper to resolve files across multiple possible execution locations (Vercel Lambda vs local)
+function resolveStaticFile(filename) {
+  const candidates = [
+    path.join(PUBLIC_DIR, filename),
+    path.join(ROOT_DIR, filename),
+    path.join(process.cwd(), 'public', filename),
+    path.join(process.cwd(), filename),
+    path.join(__dirname, '..', 'public', filename),
+    path.join(__dirname, '..', filename)
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static frontend files
-app.use(express.static(PUBLIC_DIR));
+// Serve static directories if present
+if (fs.existsSync(PUBLIC_DIR)) {
+  app.use(express.static(PUBLIC_DIR));
+  app.use('/public', express.static(PUBLIC_DIR));
+}
+if (fs.existsSync(ROOT_DIR)) {
+  app.use(express.static(ROOT_DIR));
+}
 
-// Health / Config endpoint
-app.get('/api/health', (req, res) => {
+// Explicit root routes for guaranteed index.html delivery
+app.get(['/', '/index.html', '/public', '/public/index.html'], (req, res) => {
+  const file = resolveStaticFile('index.html');
+  if (file) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.sendFile(file);
+  }
+  res.status(404).send('index.html not found');
+});
+
+// Explicit assets.js delivery
+app.get(['/assets.js', '/public/assets.js'], (req, res) => {
+  const file = resolveStaticFile('assets.js');
+  if (file) {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    return res.sendFile(file);
+  }
+  res.status(404).send('assets.js not found');
+});
+
+// Explicit template image delivery
+app.get([
+  '/template1_soldier.jpg', '/public/template1_soldier.jpg',
+  '/template2_diyas.jpg', '/public/template2_diyas.jpg',
+  '/template3_corporate.jpg', '/public/template3_corporate.jpg'
+], (req, res) => {
+  const basename = path.basename(req.path);
+  let file = resolveStaticFile(basename);
+  if (!file) {
+    file = resolveStaticFile(path.join('assets', 'templates', basename));
+  }
+  if (file) {
+    res.setHeader('Content-Type', 'image/jpeg');
+    return res.sendFile(file);
+  }
+  res.status(404).send('Template image not found');
+});
+
+// Health / Config endpoint (supports both /api/health and /health)
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'ok',
     app: 'Spekctrum Diwali Personalization Engine',
@@ -38,10 +100,10 @@ app.get('/api/health', (req, res) => {
 });
 
 /**
- * GET /api/card
+ * GET /api/card or /card
  * Query params: name, template, download, comma
  */
-app.get('/api/card', async (req, res) => {
+app.get(['/api/card', '/card'], async (req, res) => {
   try {
     const name = (req.query.name || 'Friend').trim();
     const templateId = String(req.query.template || '1');
@@ -77,10 +139,10 @@ app.get('/api/card', async (req, res) => {
 });
 
 /**
- * POST /api/batch
+ * POST /api/batch or /batch
  * JSON Body: { names: string[], template: "1"|"2"|"3"|"all", comma?: boolean }
  */
-app.post('/api/batch', async (req, res) => {
+app.post(['/api/batch', '/batch'], async (req, res) => {
   try {
     const { names, template = 'all', comma = true } = req.body;
     if (!Array.isArray(names) || names.length === 0) {
@@ -89,7 +151,9 @@ app.post('/api/batch', async (req, res) => {
 
     const templatesToRun = template === 'all' ? ['1', '2', '3'] : [String(template)];
     const batchDir = path.join(OUTPUT_DIR, `batch_${Date.now()}`);
-    fs.mkdirSync(batchDir, { recursive: true });
+    try {
+      fs.mkdirSync(batchDir, { recursive: true });
+    } catch (_) {}
 
     const results = [];
 
@@ -106,7 +170,9 @@ app.post('/api/batch', async (req, res) => {
         const filePath = path.join(batchDir, filename);
 
         const jpegBuffer = await renderCard(tId, name, { addComma: comma });
-        fs.writeFileSync(filePath, jpegBuffer);
+        try {
+          fs.writeFileSync(filePath, jpegBuffer);
+        } catch (_) {}
 
         results.push({
           name,
@@ -141,4 +207,3 @@ if (require.main === module) {
 }
 
 module.exports = app;
-

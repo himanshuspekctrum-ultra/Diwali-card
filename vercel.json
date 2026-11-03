@@ -2,12 +2,20 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api"
+      "source": "/api/card",
+      "destination": "/api/card.js"
     },
     {
-      "source": "/(.*)",
-      "destination": "/public/$1"
+      "source": "/api/health",
+      "destination": "/api/health.js"
+    },
+    {
+      "source": "/api/batch",
+      "destination": "/api/batch.js"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
     }
   ]
 }
